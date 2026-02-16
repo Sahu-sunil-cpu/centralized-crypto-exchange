@@ -1,0 +1,18 @@
+{
+  "name": "matching-engine",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@types/node": "^25.0.10",
+    "fs": "^0.0.1-security",
+    "redis": "^5.10.0",
+    "zod": "^4.3.6"
+  }
+}
