@@ -9,8 +9,6 @@ A high-performance, full-stack centralized crypto exchange inspired by platforms
 - Secure user authentication  
 - Scalable architecture  
 
-> 🔧 Built with TypeScript, Node.js, React, WebSockets, PostgreSQL, and Redis.
-
 ---
 
 ## 🚀 Features
