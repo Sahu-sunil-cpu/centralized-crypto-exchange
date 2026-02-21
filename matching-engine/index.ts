@@ -4,20 +4,11 @@ import { RedisManager } from "./RedisManager";
 import { Actions, type incomingData } from "./types/IncomingData";
 import { createClient } from "redis";
 
-const redis_url = process.env.REDIS_URL;
-if(!redis_url) throw new Error("REDIS_URL is not set");
+
+  const client = createClient();
 const engine = new Engine();
-const client = createClient({
-    url: redis_url
-});
 
-
-// here websockets needed to be implemented
 export function QueueHandler(clientId: string, message: incomingData) {
-
-    // console.log(message)
-    // console.log(message.data)
-
 
     switch (message.type) {
         case Actions.create_order:
@@ -166,6 +157,7 @@ export function QueueHandler(clientId: string, message: incomingData) {
 async function StartEngine() {
 
     try {
+      
         await client.connect();
         console.log("matching engine is running");
 
@@ -186,7 +178,7 @@ async function StartEngine() {
             }
         }
     } catch (error) {
-        console.error("error connecting to redis");
+        console.error(error);
 
     }
 }

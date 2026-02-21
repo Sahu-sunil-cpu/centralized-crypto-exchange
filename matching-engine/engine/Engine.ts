@@ -1,5 +1,5 @@
 import fs from "fs";
-import { Fill, Order, Orderbook } from "./orderbook";
+import { type Fill, type Order, Orderbook } from "./orderbook";
 import { RedisManager } from "../RedisManager";
 
 //TODO: Avoid floats everywhere, use a decimal similar to the PayTM project for every currency
@@ -47,8 +47,8 @@ export class Engine {
     createOrder(market: string, price: string, quantity: string, side: "buy" | "sell", userId: string, orderId: string, time: string, type: string) {
         console.log(this.orderbooks)
         const orderbook = this.orderbooks.find(o => o.ticker() === market)
-        const baseAsset = market.split("_")[1];
-        const quoteAsset = market.split("_")[0];
+        const baseAsset = market.split("_")[1] || "";
+        const quoteAsset = market.split("_")[0] || "";
 
         if (!orderbook) {
             throw new Error("No orderbook found");
@@ -285,6 +285,7 @@ export class Engine {
                 }
             });
         } else {
+            //@ts-ignore
             userBalance[BASE_CURRENCY].available += amount;
         }
     }

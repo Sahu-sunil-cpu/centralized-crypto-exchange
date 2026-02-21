@@ -94,21 +94,33 @@ export class Orderbook {
         let executedQty = 0;
 
         for (let i = 0; i < this.asks.length; i++) {
-            if (this.asks[i].price <= order.price && executedQty < order.quantity) {
-                const filledQty = Math.min((order.quantity - executedQty), this.asks[i].quantity);
+
+             const ask = this.asks[i];
+
+             if(!ask) continue;
+
+            if (ask.price <= order.price && executedQty < order.quantity) {
+                const filledQty = Math.min((order.quantity - executedQty), ask.quantity);
                 executedQty += filledQty;
-                this.asks[i].filled += filledQty;
+                ask.filled += filledQty;
                 fills.push({
-                    price: this.asks[i].price.toString(),
+                    price: ask.price.toString(),
                     qty: filledQty,
                     tradeId: this.lastTradeId++,
-                    otherUserId: this.asks[i].userId,
-                    markerOrderId: this.asks[i].orderId
+                    otherUserId: ask.userId,
+                    markerOrderId: ask.orderId
                 });
             }
         }
+
+
         for (let i = 0; i < this.asks.length; i++) {
-            if (this.asks[i].filled === this.asks[i].quantity) {
+
+            const ask = this.asks[i];
+
+             if(!ask) continue;
+
+            if (ask.filled === ask.quantity) {
                 this.asks.splice(i, 1);
                 i--;
             }
@@ -125,21 +137,31 @@ export class Orderbook {
         let executedQty = 0;
         
         for (let i = 0; i < this.bids.length; i++) {
-            if (this.bids[i].price >= order.price && executedQty < order.quantity) {
-                const amountRemaining = Math.min(order.quantity - executedQty, this.bids[i].quantity);
+
+            const bid = this.bids[i];
+
+            if(!bid) continue;
+
+            if (bid.price >= order.price && executedQty < order.quantity) {
+                const amountRemaining = Math.min(order.quantity - executedQty, bid.quantity);
                 executedQty += amountRemaining;
-                this.bids[i].filled += amountRemaining;
+                bid.filled += amountRemaining;
                 fills.push({
-                    price: this.bids[i].price.toString(),
+                    price: bid.price.toString(),
                     qty: amountRemaining,
                     tradeId: this.lastTradeId++,
-                    otherUserId: this.bids[i].userId,
-                    markerOrderId: this.bids[i].orderId
+                    otherUserId: bid.userId,
+                    markerOrderId: bid.orderId
                 });
             }
         }
         for (let i = 0; i < this.bids.length; i++) {
-            if (this.bids[i].filled === this.bids[i].quantity) {
+
+             const bid = this.bids[i];
+
+            if(!bid) continue;
+
+            if (bid.filled === bid.quantity) {
                 this.bids.splice(i, 1);
                 i--;
             }
@@ -160,26 +182,32 @@ export class Orderbook {
 
         for (let i = 0; i < this.bids.length; i++) {
             const order = this.bids[i];
+
+            if(!order) continue;
+
             if (!bidsObj[order.price]) {
                 bidsObj[order.price] = 0;
             }
-            bidsObj[order.price] += order.quantity;
+            bidsObj[order.price]! += order.quantity;
         }
 
         for (let i = 0; i < this.asks.length; i++) {
             const order = this.asks[i];
+
+              if(!order) continue;
+
             if (!asksObj[order.price]) {
                 asksObj[order.price] = 0;
             }
-            asksObj[order.price] += order.quantity;
+            asksObj[order.price]! += order.quantity;
         }
 
         for (const price in bidsObj) {
-            bids.push([price, bidsObj[price].toString()]);
+            bids.push([price, bidsObj[price]!.toString()]);
         }
 
         for (const price in asksObj) {
-            asks.push([price, asksObj[price].toString()]);
+            asks.push([price, asksObj[price]!.toString()]);
         }
 
         return {
@@ -197,6 +225,11 @@ export class Orderbook {
     cancelBid(order: Order) {
         const index = this.bids.findIndex(x => x.orderId === order.orderId);
         if (index !== -1) {
+
+            if(!this.bids[index]) {
+                console.log("order does not exist");
+                return;
+            }
             const price = this.bids[index].price;
             this.bids.splice(index, 1);
             return price
@@ -206,6 +239,10 @@ export class Orderbook {
     cancelAsk(order: Order) {
         const index = this.asks.findIndex(x => x.orderId === order.orderId);
         if (index !== -1) {
+             if(!this.asks[index]) {
+                console.log("order does not exist");
+                return;
+            }
             const price = this.asks[index].price;
             this.asks.splice(index, 1);
             return price
